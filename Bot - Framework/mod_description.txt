@@ -1,0 +1,1 @@
+Extends game inputs for bot framework

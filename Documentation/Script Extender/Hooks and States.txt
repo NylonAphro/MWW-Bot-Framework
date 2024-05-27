@@ -1,0 +1,314 @@
+HOOKS & STATES FOR FILES
+
++============================================================+
+gui_manager.lua
+
+	States:
+		"gui_manager" "init"
+
++============================================================+
+scripts/common/loadout_setup_client.lua
+
+	States:
+		"loadout_setup" "init"
+	Hooks:
+		"player_loadout"
+		"loadout_info"
+
++============================================================+
+damage_tracker.lua
+
+	States:
+		"damage_tracker" "healing_received"
+		"damage_tracker" "healing_received_from_team"
+		"damage_tracker" "healing_received_from_enemy"
+		"damage_tracker" "healing_given_team"
+		"damage_tracker" "healing_given_enemy"
+		"damage_tracker" "healing_given_self"
+		"damage_tracker" "healing_given_total"
+		"damage_tracker" "damage_received"
+		"damage_tracker" "damage_received_from_team"
+		"damage_tracker" "damage_received_from_enemy"
+		"damage_tracker" "damage_given_enemy"
+		"damage_tracker" "damage_given_team"
+		"damage_tracker" "damage_given_self"
+		"damage_tracker" "damage_given_total"
+		"player_death" "assist"
+
++============================================================+
+chat_gui.lua
+
+	States:
+		"chat_gui" "init"
+	Hooks:
+		"chat_gui"
+		"has_focus"
+		"input_field"
+		"chat_gui"
+
++============================================================+
+chat_system.lua
+
+	States:
+		"chat_system" "send_room_message"
+		"chat_system" "on_message_prepend"
+		"chat_system" "on_message_append"
+		"chat_system" "on_message_prepend_name"
+		"chat_system" "on_message_append_name"
+		"chat_system" "on_message"
+		"chat_system" "on_message_prepend"
+		"chat_system" "on_message_append"
+		"chat_system" "on_message_prepend_name"
+		"chat_system" "on_message_append_name"
+		"chat_system" "on_message"
+		"chat_system" "on_presence"
+		"chat_system" "other_player_joined_chat"
+		"chat_joined" "init"
+
++============================================================+
+camera_system.lua
+
+	States:
+		"CameraSystem" "init"
+		"CameraSystem" "set_camera_target"
+		"CameraSystem" "revert_camera_target"
+
++============================================================+
+damage_system.lua
+
+	States:
+		"damage_system" "init"
+
++============================================================+
+damage_feedback_system.lua
+
+	States:
+		"player_death" kill_type
+		"player_death" kill_type
+		"player_death" kill_type
+		"player_death" kill_type
+		"unit_death" "any"
+
++============================================================+
+effect_manager.lua
+
+
++============================================================+
+scripts/game/entity_system/systems/gui_2d/gui_2d_system.lua
+
+	States:
+		"gui_2d_system" "init"
+	Hooks:
+		"UI_2d_system"
+		"UI_gui_manager"
+		"UI_hud_manager"
+
++============================================================+
+health_system_client.lua
+
+	States:
+		"health_system_client" "init"
+		"health_system_client" "rpc_from_server_resurrect"
+		"health_system_client" "rpc_from_server_unit_respawn"
+		"health_system_client" "rpc_gib_unit"
+		"health_system_client" "generate_post_mortem"
+		"health_system_client" "on_local_player_death"
+		"health_system_client" "on_physics_impact"
+		"health_system_client" "gib_unit"
+		"health_system_client" "rpc_from_server_on_local_player_death"
+		"health_system_client" "rpc_from_server_on_death"
+		"health_system_client" "handle_death"
+
++============================================================+
+input_system.lua
+
+	States:
+		"input_system" "init"
+
++============================================================+
+inventory_system.lua
+
+
++============================================================+
+spell_weapon_client.lua
+
+	States:
+		"init" caster
+
++============================================================+
+scripts/game/gamemode/gamemode_koala_gui.lua
+
+	Hooks:
+		"warfare_data"
+
++============================================================+
+scripts/game/gamemode/ui_components/ui_message_queue.lua
+
+	States:
+		"player_death" kill_type
+	Hooks:
+		"ui_gamemode_context"
+
++============================================================+
+scripts/game/gamemode/ui_components/ui_portraits.lua
+
+	Hooks:
+		"portrait_ui"
+		"player_markup_list"
+
++============================================================+
+scripts/game/gamemode/ui_components/ui_score_screen.lua
+
+	States:
+		"ui_score_screen" "init"
+		"ui_score_screen" "refresh_score_state"
+		"ui_score_screen" "on_local_player_spawn"
+		"ui_score_screen" "on_spectator_player_spawn"
+		"ui_score_screen" "on_peer_disconnect_client_pd"	
+		"ui_score_screen" "rpc_from_server_gamesession_stats"
+		"ui_score_screen" "rpc_from_server_player_afk"
+		"ui_score_screen" "rpc_from_server_match_over"
+	Hooks:
+		"score_screen_markup"
+		"score_screen_style"
+		"on_show_stats_screen"
+		peer_id.."_peer_data"
+
++============================================================+
+scripts/game/game_state/account/account_state_login.lua
+
+	Hooks:
+		"account_state_login"
+
++============================================================+
+game_state_login.lua
+
+	States:
+		"login_screen" "init"
+	Hooks:
+		"login_screen"
+
++============================================================+
+scripts/game/game_state/game_state_menu.lua
+
+	States:
+		"menu" "on_enter"
+		"menu" "init"
+	Hooks:
+		"play_button"
+		"ui_scene"
+		"custom_match_list_interface"
+		"GAME_LEVEL"
+
++============================================================+
+scripts/game/game_state/game_state_rewards.lua
+
+	States:
+		"game_state_rewards" "init"
+	Hooks:
+		"game_state_rewards"
+
++============================================================+
+game_state_ingame_client_running.lua
+
+	States:
+		"ingame" "init"
+		"ingame" "setup_network"
+		"ingame" "rpc_from_server_teleport_player"
+		"ingame" "match_start"
+		"ingame" "session_disconnect"
+		"ingame" "on_enter"
+		"ingame" "game_over"
+		"ingame" "setup_gamemode"
+		"ingame" "setup_team_manager"
+		"ingame" "setup_hud_manager"
+		"ingame" "setup_gui_manager"
+		"ingame" "setup_game_world"
+		"ingame" "spawn_unit"
+		"ingame" "transition_to_menu"
+		"ingame" "on_score_screen_continue"
+	Hooks:
+		"peers_to_disconnect"
+		"game_world"
+		"ping_ms"
+		"packet_loss"
+		"fps_average"
+
++============================================================+
+state_ingame_lobby_client.lua
+
+	States:
+		"state_ingame_lobby_client" "init"
+		"ingame_lobby" "request_join"
+		"ingame_lobby" "update_client"
+
++============================================================+
+lobby_screen.lua
+
+	States:
+		"lobby_screen" "init"
+		"lobby_screen" "destroy"
+	Hooks:
+		"lobby_location_lookup"
+
++============================================================+
+hud_manager.lua
+
+	States:
+		"init_ui" "init"
+	Hooks:
+		"hud_manager"
+
++============================================================+
+custom_match_config.lua
+
+	States:
+		"custom_match" "init"
+	Hooks:
+		"player_is_host"
+		"player_is_host"
+
++============================================================+
+menu_base.lua
+
+	States:
+		"menu_base" "init"
+		"menu_base" "change_category"
+	Hooks:
+		"player_assembly"
+		"menu_change_category"
+
++============================================================+
+scripts/game/menu/menu_screen_manager.lua
+
+	Hooks:
+		"inventory"
+		"all_item_fake_instances"
+
++============================================================+
+scripts/game/ui2/ui.lua
+
+	Hooks:
+		"UI"
+
++============================================================+
+ui_context.lua
+
+
++============================================================+
+state_subscriber.lua
+
+	States:
+		state_type event_
+		
+	Hooks:
+		functionvar_name
+
++============================================================+
+unit_functions.lua
+
+	States:
+		"unit_functions" "unit_using_magick"
+		"unit_functions" "unit_using_ability_ended"
+		"unit_functions" "unit_using_ability"
+		"ingame" "players_initialized"
