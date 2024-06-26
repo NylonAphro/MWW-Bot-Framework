@@ -505,7 +505,7 @@ ActionController.activation_conditions = {
             return false
         end
         return true
-    end
+    end,
 }
 
 --Do not make changes unless you really know what you are doing!

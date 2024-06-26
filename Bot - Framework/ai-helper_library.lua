@@ -129,30 +129,31 @@ end
 HelperLibrary.map_point_is_valid = function(point)
     return pathing:cane_mesh_valid_pos(point)
 end
+
 --raycasting stuff
 HelperLibrary.get_player_obstructions = function(ai_data, player_id)
-    if not ai_data.player_data then return end
-    if not ai_data.player_data[player_id] then return end
+    if not ai_data.player_data then printf("NO PLAYERS - error, player data does not exist for player_id: %s", tostring(player_id)); return end
+    if not ai_data.player_data[player_id] then printf("error, player data does not exist for player_id: %s", tostring(player_id)); return end
     return ai_data.player_data[player_id].obstructions
 end
 HelperLibrary.player_is_obstructed = function(ai_data, player_id)
-    if not ai_data.player_data then return end
-    if not ai_data.player_data[player_id] then return end
-    return #ai_data.player_data[player_id].obstructions >= 1
+    if not ai_data.player_data then printf("NO PLAYERS - error, player data does not exist for player_id: %s", tostring(player_id)); return end
+    if not ai_data.player_data[player_id] then printf("error, player data does not exist for player_id: %s", tostring(player_id)); return false end
+    return next(ai_data.player_data[player_id].obstructions) ~= nil
 end
 HelperLibrary.get_player_shield_obstructions = function(ai_data, player_id)
-    if not ai_data.player_data then return end
-    if not ai_data.player_data[player_id] then return end
+    if not ai_data.player_data then printf("NO PLAYERS - error, player data does not exist for player_id: %s", tostring(player_id)); return end
+    if not ai_data.player_data[player_id] then printf("error, player data does not exist for player_id: %s", tostring(player_id)); return end
     return ai_data.player_data[player_id].shield_obstructions
 end
 HelperLibrary.player_is_obstructed_by_shield = function(ai_data, player_id)
-    if not ai_data.player_data then return end
-    if not ai_data.player_data[player_id] then return end
-    return #ai_data.player_data[player_id].shield_obstructions >= 1
+    if not ai_data.player_data then printf("NO PLAYERS - error, player data does not exist for player_id: %s", tostring(player_id)); return end
+    if not ai_data.player_data[player_id] then printf("error, player data does not exist for player_id: %s", tostring(player_id)); return end
+    return next(ai_data.player_data[player_id].shield_obstructions) ~= nil
 end
 HelperLibrary.player_blocked_by_shield = function(ai_data, player_id)
     local shield_obstructions = HelperLibrary.get_player_shield_obstructions(ai_data, player_id)
-    if not shield_obstructions then return false end
+    if not shield_obstructions then printf("NO PLAYERS - error, player data does not exist for player_id: %s", tostring(player_id)); return false end
     if not shield_obstructions.shield then return false end
     return shield_obstructions.shield
 end

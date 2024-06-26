@@ -49,7 +49,6 @@ end
 function Bot:update()
     local ai_data = self.ai_data
     -- Add general update logic here eg pathing
-
 end
 
 --- Bot general logic and actions/routines should be placed here

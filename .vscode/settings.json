@@ -1,5 +1,11 @@
 {
     "Lua.diagnostics.disable": [
         "trailing-space"
+    ],
+    "Lua.diagnostics.globals": [
+        "Vector3",
+        "CaneNavmeshQuery",
+        "GLOBAL_CANE_NAVMESHQUERY",
+        "printf"
     ]
 }
