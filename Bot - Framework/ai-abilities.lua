@@ -48,6 +48,13 @@ BotAbilities = {
         arcane = function() return action.ward({e,s,s}, {}, {activation_conditions.bot_already_warded}) end,
         earth = function() return action.ward({e,d,d}, {}, {activation_conditions.bot_already_warded}) end,
         fire = function() return action.ward({e,f,f}, {}, {activation_conditions.bot_already_warded}) end,
+        input_spell = function(spell_to_ward) 
+            if spell_utilities.spell_contains(spell_to_ward) and #spell_to_ward > 1 then
+                return action.ward(table.deep_clone(spell_to_ward), {}, {activation_conditions.bot_already_warded})
+            else
+                return action.ward({e, spell_to_ward[1], spell_to_ward[2] or spell_to_ward[1]}, {}, {activation_conditions.bot_already_warded})
+            end
+        end,
     },
 
     --projectiles

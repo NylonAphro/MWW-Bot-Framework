@@ -48,7 +48,14 @@ end
 ---@param self table
 function Bot:update()
     local ai_data = self.ai_data
-    -- Add general update logic here eg pathing
+    local dt = self.dt
+    local queue = self.queue or QueueController -- this "or QueueController" is here just make autofill work
+    local action = self.action or ActionController
+    local combos = self.combo or BotCombos
+    local activation_condition = action.activation_conditions
+    local on_update = action.on_update
+
+    local target_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
 end
 
 --- Bot general logic and actions/routines should be placed here
@@ -65,16 +72,19 @@ function Bot:update_logic()
     local on_update = action.on_update
     
     --add actions/combos here
-    if ai_data.target_unit and ai_data.target_unit ~= ai_data.bot_unit and ai_data.self_data.health_p >= 90 then
-        if unit_utilities.distance_between_units(ai_data.bot_unit, ai_data.target_unit) < 4 then
-            queue:new_action(abilities.weapon.charge)
-        else
-            queue:new_combo(combos.water_beam_cold_shatter(ai_data))
-        end
-    elseif ai_data.self_data.health_p < 90 then
-        queue:new_combo(combos.heal_turtle(ai_data))
-    end
+    -- if ai_data.target_unit and ai_data.target_unit ~= ai_data.bot_unit and ai_data.self_data.health_p >= 90 then
+    --     if unit_utilities.distance_between_units(ai_data.bot_unit, ai_data.target_unit) < 4 then
+    --         queue:new_action(abilities.weapon.charge)
+    --     else
+    --         queue:new_combo(combos.water_beam_cold_shatter(ai_data))
+    --     end
+    -- elseif ai_data.self_data.health_p < 90 then
+    --     queue:new_combo(combos.heal_turtle(ai_data))
+    -- end
     
+    local target_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+    queue:new_action(abilities.ward.input_spell(target_data.spell))
+
 end
 
 return Bot
