@@ -41,7 +41,7 @@ The bot operates on a *queue* system. You queue a number of actions and the bot 
 ```lua
 --this will make the bot wait the given time before moving onto the next item in the queue
 --wait time is given in seconds, here will pause the bot for 5 seconds
-queue:new_action(action.face_point(5))
+queue:new_action(action.wait(5))
 ```
 
 ### *make the bot face a point*
