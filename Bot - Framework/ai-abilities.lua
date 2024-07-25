@@ -30,7 +30,7 @@ BotAbilities = {
         wall_facing_target = function() return action.spell({0,0,0}, {w,e,d}, false, 0, {}, action.on_update.face_target_unit) end,
         mines_facing_target = function() return action.spell({0,0,0}, {e,w,w}, false, 0, {}, action.on_update.face_target_unit) end,
         mines_facing_away_from_target = function() return action.spell({0,0,0}, {e,w,w}, false, 0, {}, action.on_update.face_away_from_target_unit) end,
-        self_channel = function() return action.self_channel({e,w,w}, 5, {}, {}, {action.on_update.cancel_if_bot_full_hp}) end,
+        self_channel = function() return action.self_channel({w,w,w}, 5, {}, {}, {action.on_update.cancel_if_bot_full_hp}) end,
     },
 
     --aoe

@@ -92,9 +92,14 @@ HelperLibrary.unit_is_chilled = function(unit)
     local unit_data = unit_utilities.get_unit_data_from_unit(unit)
     return unit_data.status.chilled
 end
+
+---Bot Framework
+---@param unit any
+---@return number
+---Returns value between 0 and 4, where 0 is not chilled, and 4 is frozen (3 is almost frozen)
 HelperLibrary.get_unit_chill_level = function(unit)
     local unit_data = unit_utilities.get_unit_data_from_unit(unit)
-    return unit_data.status.chill_level
+    return unit_data.chill_level
 end
 HelperLibrary.unit_is_frozen = function(unit)
     local unit_data = unit_utilities.get_unit_data_from_unit(unit)

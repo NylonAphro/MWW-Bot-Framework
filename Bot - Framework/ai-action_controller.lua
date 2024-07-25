@@ -211,7 +211,6 @@ end
 ---@param on_update any|nil
 ---@return table
 ---recieves a point to move to and returns a table with the action type and the point
----this action will free the queue immediately
 ActionController.spell = function(facing_target, elements, self_cast, charge_time, condition_args, activation_conditions, on_update)
     facing_target = facing_target or {}
     return {
@@ -238,7 +237,6 @@ end
 ---@return table
 ---similar to cast_spell but charge time is a value between 0 and 1 where 1 is the maximum charge time, above 1 is overcharged
 ---the value is not in seconds but a percentage of the maximum charge time
----this action will free the queue immediately
 ActionController.projectile = function(facing_target, elements, charge_time, condition_args, activation_conditions, on_update)
     facing_target = facing_target or {}
     return {
@@ -263,9 +261,8 @@ end
 ---@param activation_conditions any|nil
 ---@param on_update any|nil
 ---@return table
----similar to cast_spell but charge time is a value between 0 and 1 where 1 is the maximum charge time, above 1 is overcharged
----the value is not in seconds but a percentage of the maximum charge time
----this action will free the queue immediately
+---similar to cast_spell, charge time is a value in x seconds, if the ability runs out or is interrupted it should move
+---onto the next qction in the queue
 ActionController.beam = function(facing_target, elements, charge_time, condition_args, activation_conditions, on_update)
     facing_target = facing_target or {}
     return {
@@ -290,9 +287,8 @@ end
 ---@param activation_conditions any|nil
 ---@param on_update any|nil
 ---@return table
----similar to cast_spell but charge time is a value between 0 and 1 where 1 is the maximum charge time, above 1 is overcharged
----the value is not in seconds but a percentage of the maximum charge time
----this action will free the queue immediately
+---similar to cast_spell, charge time is a value in x seconds, if the ability runs out or is interrupted it should move
+---onto the next qction in the queue
 ActionController.spray = function(facing_target, elements, charge_time, condition_args, activation_conditions, on_update)
     facing_target = facing_target or {}
     return {
@@ -335,7 +331,6 @@ end
 ---@param on_update any
 ---@return table
 ---recieves a point to move to and returns a table with the action type and the point
----this action will free the queue immediately
 ActionController.self_channel = function(elements, charge_time, condition_args, activation_conditions, on_update)
     return {
         condition_args = table.deep_clone(condition_args or {}), 
@@ -377,7 +372,6 @@ end
 ---@param on_update any
 ---@return table
 ---recieves a point to move to and returns a table with the action type and the point
----this action will free the queue immediately
 ActionController.magick = function(target_pos, magick,condition_args, activation_conditions, on_update)
     target_pos = target_pos or {}
     return {
@@ -901,7 +895,7 @@ ActionController.update_functions = {
 
             --check if the bot is still channeling
             if (ai_data.self_data.state ~= "casting" and ai_data.self_data.state ~= "channeling" and ai_data.self_data.state ~= "chargeup")
-            or ai_data.self_data.charge_time > queued_ability.charge_time
+            or ai_data.self_data.charge_time >= queued_ability.charge_time
             then
                 queued_ability.casting_ended = true
 
