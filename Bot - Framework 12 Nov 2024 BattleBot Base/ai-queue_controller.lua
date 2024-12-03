@@ -23,7 +23,7 @@ end
 ---Removes the first action from the action queue.
 function QueueController:finish_action()
     if #self.action_queue > 0 then
-        print("Removing action: " .. tostring(self.action_queue[1].action) .. " " .. tostring(self.action_queue[1].ability_name) .. " info:\n" .. PAIRS_TO_STRING(self.action_queue[1], 2))
+        print("Removing action: " .. PAIRS_TO_STRING(self.action_queue[1], 0))
         table.remove(self.action_queue, 1)
     end
 end
@@ -31,8 +31,7 @@ end
 ---queue_controller
 ---Adds an action to the action queue.
 ---@param action any|function
-function QueueController:new_action(action, ability_name)
-    ability_name = ability_name or "missing_ability_name"
+function QueueController:new_action(action)
     if #self.action_queue >= self.max_queue_size then
         printf("Action queue is full, cannot add more than %s actions!", tostring(self.max_queue_size))
         return
@@ -42,26 +41,20 @@ function QueueController:new_action(action, ability_name)
         action = action()
     end
 
-    --print(type(action) .. " action: ")
-    --PRINT_TABLE(action)
-
-    action.ability_name = ability_name
-
     table.insert(self.action_queue, action)
 end
 
 ---queue_controller
 ---Adds a combo of actions to the action queue.
 ---@param combo function|table The combo function or table of actions to be added.
-function QueueController:new_combo(combo, ability_name)
-    ability_name = ability_name or "missing_combo_name"
+function QueueController:new_combo(combo)
     if type(combo) == "function" then
         combo = combo()
     end
 
     if type(combo) == "table" then
         for _, action in ipairs(combo) do
-            self:new_action(action, ability_name)
+            self:new_action(action)
         end
     else
         print("Invalid combo type, expected function or table.")
@@ -80,15 +73,8 @@ end
 ---queue_controller
 ---Removes all actions in the action queue.
 function QueueController:clear()
-    print("queue is being completely cleared!")
     self:cancel_current_action()
     self.action_queue = {}
-end
-
----queue_controller
----Removes all actions in the action queue.
-function QueueController:clear_all_but_active_ability()
-    self.action_queue = {self.action_queue[1] or nil}
 end
 
 ---queue_controller
@@ -109,15 +95,9 @@ function QueueController:evaluate_abilities(ai_data, dt)
     end
 
     bot:select_target()
-    bot:update(dt)
+    bot:update()
 
-    --fix stuck weapon swings, may not be working as inteded
-    if #self.action_queue == 0 and ai_data.melee then
-        ai_data.melee = false
-        ai_data.channel = false
-    end
-
-    if (ai_data.self_data.state == "onground" or ai_data.self_data.state == "melee") and #self.action_queue == 0 and not self.queue_busy and not ai_data.bot_disabled then
+    if ai_data.self_data.state == "onground" and #self.action_queue == 0 and not self.queue_busy and not ai_data.bot_disabled then
         bot:update_logic(self)
     end
 
@@ -138,19 +118,14 @@ function QueueController:update_active_ability(ai_data, dt)
             if current_action.deactivate then
                 current_action.deactivate(current_action, ai_data, dt)
             end
-            print("ability determined should deactivate, removing from queue")
             self:finish_action()
             self.queue_busy = false
             return
         end
 
         if not self.queue_busy then
-            PRINT_TABLE(current_action)
-            self.queue_busy = true
             bot.action.run_activation_conditions(current_action, ai_data, dt)
             if not current_action.can_use_ability then
-                print("initial ability determined could not activate, removing from queue")
-                self.queue_busy = false
                 self:finish_action()
 
                 --recursively call update until there is either no action, or a valid action
