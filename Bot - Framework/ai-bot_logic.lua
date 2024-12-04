@@ -91,7 +91,7 @@ function Bot:update_mode(dt)
     local current_mode = ai_data.mode
 
     --set the bot mode based off of hp
-    if ai_data.self_data.health_p >= target_data.health_p - 20 then
+    if ai_data.self_data.health_p >= (target_data.health_p - 30) then
         ai_data.mode = helper.bot_modes.attack
     else
         ai_data.mode = helper.bot_modes.heal
@@ -180,7 +180,7 @@ function Bot:update_debug(dt)
     debug_markup[#debug_markup+1] = UIFunc.new_text_markup("X", WORLD_TO_SCREEN(MOVE_TOWARDS_POINT(TO_VECTOR(ai_data.self_data.position_table), helper.get_unit_pos_and_facing(ai_data.bot_unit), 8.25)), 20, UIProperties.color.teal(), true)
     
     --draw ability wanted pos 
-    local queued_ability = queue:get_current_action()
+    local queued_ability = queue:get_current_action() or {"no runnin ability"}
     if queued_ability then
         if queued_ability.move_target then
             debug_markup[#debug_markup+1] = UIFunc.new_text_markup(tostring(math.round(ai_data.distance_to_move_target or 0)), WORLD_TO_SCREEN(queued_ability.move_target), 30, UIProperties.color.blue(), true)
@@ -196,7 +196,24 @@ function Bot:update_debug(dt)
     DRAW_MARKUP(dt, debug_markup)
     
     --draw pathing map (disable to save screen space)
-    BotPathing:draw_debug_map_area(ROUND_POINT_OR_VECTOR(GET_UNIT_DATA(Network.peer_id()).position_table or {0,0,0}), 10)
+    --BotPathing:draw_debug_map_area(ROUND_POINT_OR_VECTOR(GET_UNIT_DATA(Network.peer_id()).position_table or {0,0,0}), 10)
+
+    pdDebug.text("                        Name: " .. ai_data.target_unit_data.name .. " unit: " .. tostring(ai_data.target_unit))
+
+	local action_queue = queue.action_queue
+
+	pdDebug.text("            current action: " .. tostring(queued_ability.action) .. " " .. tostring(queued_ability.ability_name) .. " info: " .. PAIRS_TO_STRING_ONE_LINE(queued_ability))
+
+	for index, action in ipairs(action_queue) do
+        if index ~= 1 then
+		    pdDebug.text("                    action: " .. tostring(action.action) .. " " .. tostring(action.ability_name) .. " info: " .. PAIRS_TO_STRING_ONE_LINE(action))
+        end
+	end
+
+    --print timers
+    for key, value in pairs(ai_data.timers) do
+        pdDebug.text("                        timer: " .. tostring(key) .. ": " .. tostring(ai_data.timers[key]))
+	end
 end
 
 --- General bot update stuff like pathing should be added here

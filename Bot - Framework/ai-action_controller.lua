@@ -565,15 +565,15 @@ ActionController.activation_conditions = {
 
         local distance_to_target = ai_data.target_distance
 
-        queued_ability.condition_args.minumum_range = queued_ability.condition_args.minumum_range or 0
+        queued_ability.condition_args.minimum_range = queued_ability.condition_args.minimum_range or 0
         queued_ability.condition_args.maximum_range = queued_ability.condition_args.maximum_range or 1000000
 
-        if not queued_ability.condition_args.minumum_range or not queued_ability.condition_args.maximum_range then
-            print("within_range error, condition_args.minumum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
+        if not queued_ability.condition_args.minimum_range or not queued_ability.condition_args.maximum_range then
+            print("within_range error, condition_args.minimum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
         end
 
-        if distance_to_target < queued_ability.condition_args.minumum_range or distance_to_target > queued_ability.condition_args.maximum_range then
-            print("unable to cast spell as target is outside of minumum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
+        if distance_to_target < queued_ability.condition_args.minimum_range or distance_to_target > queued_ability.condition_args.maximum_range then
+            print("unable to cast spell as target is outside of minimum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
             return false
         end
 
@@ -1672,6 +1672,13 @@ ActionController.on_update = {
             ai_data.channel = false
         end
     end,
+    cancel_if_storm_blocking = function(queued_ability, ai_data, dt)
+        if helper.player_is_obstructed_by_storm(ai_data, ai_data.target_unit_data.peer_id) then
+            print("Oh wow there is a storm blocking bot's line of sight, we should cancel this spell: " .. PAIRS_TO_STRING_ONE_LINE(queued_ability))
+            queued_ability.stop_ability = true
+            ai_data.channel = false
+        end
+    end,
     cancel_if_target_changed = function(queued_ability, ai_data, dt)
         --don't run the update if there isn't a target
         if not ai_data.target_unit then return end
@@ -1794,13 +1801,13 @@ ActionController.on_update = {
 
         local distance_to_target = unit_utilities.distance_between_units(ai_data.bot_unit, ai_data.target_unit)
 
-        if not queued_ability.condition_args.minumum_range or not queued_ability.condition_args.maximum_range then
-            print("within_range error, condition_args.minumum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
+        if not queued_ability.condition_args.minimum_range or not queued_ability.condition_args.maximum_range then
+            print("within_range error, condition_args.minimum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
         end
 
-        if distance_to_target < (queued_ability.condition_args.minumum_range or 0) or distance_to_target > (queued_ability.condition_args.maximum_range or 9000) then
+        if distance_to_target < (queued_ability.condition_args.minimum_range or 0) or distance_to_target > (queued_ability.condition_args.maximum_range or 9000) then
             force_cancel = true
-            print("cancel spell as target is outside of minumum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
+            print("cancel spell as target is outside of minimum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
         end
         print("target is within range! ".. tostring(distance_to_target))
 
@@ -1816,13 +1823,13 @@ ActionController.on_update = {
 
         local distance_to_target = DISTANCE_POINT_OR_VECTOR(ai_data.self_data.position_table, queued_ability.target_pos)
 
-        if not queued_ability.condition_args.minumum_range or not queued_ability.condition_args.maximum_range then
-            printf("within_range error, condition_args.minumum_range or condition_args.maximum_range is nil, distance_to_target: %s\n".. PAIRS_TO_STRING(queued_ability), tostring(distance_to_target))
+        if not queued_ability.condition_args.minimum_range or not queued_ability.condition_args.maximum_range then
+            printf("within_range error, condition_args.minimum_range or condition_args.maximum_range is nil, distance_to_target: %s\n".. PAIRS_TO_STRING(queued_ability), tostring(distance_to_target))
         end
 
-        if distance_to_target < (queued_ability.condition_args.minumum_range or 0) or distance_to_target > (queued_ability.condition_args.maximum_range or 9000) then
+        if distance_to_target < (queued_ability.condition_args.minimum_range or 0) or distance_to_target > (queued_ability.condition_args.maximum_range or 9000) then
             force_cancel = true
-            print("cancel spell as target is outside of minumum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
+            print("cancel spell as target is outside of minimum_range/maximum_range: " .. tostring(distance_to_target) .. "\n" .. PAIRS_TO_STRING(queued_ability))
         end
         print("target is within range! ".. tostring(distance_to_target))
 
@@ -1873,10 +1880,8 @@ ActionController.condition_groups = {
         },
         lightning = {
             activation_conditions.bot_needs_ward,
-            activation_conditions.target_not_shielded, 
+            activation_conditions.bot_is_not_wet, 
             activation_conditions.target_is_valid,
-            activation_conditions.no_shield_shield_in_line_of_sight,
-            activation_conditions.bot_is_not_wet,
             activation_conditions.within_range,
         },
     },
@@ -1947,6 +1952,18 @@ ActionController.condition_groups = {
             on_update.path_to_ability_wanted_range_of_target,
             on_update.cancel_to_shield,
             on_update.cancel_if_out_of_range,
+            --on_update.path_to_wanted_position,
+        },
+        lightning = {
+            on_update.face_target_unit, 
+            on_update.cancel_if_no_target, 
+            on_update.cancel_if_storm_blocking,
+            on_update.cancel_if_target_frozen,
+            on_update.force_cancel,
+            on_update.cancel_to_ward,
+            on_update.cancel_to_shield,
+            on_update.cancel_if_out_of_range,
+            on_update.cancel_if_wet
             --on_update.path_to_wanted_position,
         },
         projectile = {

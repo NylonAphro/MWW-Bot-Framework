@@ -420,12 +420,12 @@ ActionController.activation_conditions = {
 
         local distance_to_target = unit_utilities.distance_between_units(ai_data.bot_unit, ai_data.target_unit)
 
-        if not queued_ability.condition_args.minumum_range or not queued_ability.condition_args.maximum_range then
-            print("within_range error, condition_args.minumum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
+        if not queued_ability.condition_args.minimum_range or not queued_ability.condition_args.maximum_range then
+            print("within_range error, condition_args.minimum_range or condition_args.maximum_range is nil\n".. PAIRS_TO_STRING(queued_ability))
         end
 
-        if distance_to_target < queued_ability.condition_args.minumum_range or distance_to_target > queued_ability.condition_args.maximum_range then
-            print("unable to cast spell as target is outside of minumum_range/maximum_range\n".. PAIRS_TO_STRING(queued_ability))
+        if distance_to_target < queued_ability.condition_args.minimum_range or distance_to_target > queued_ability.condition_args.maximum_range then
+            print("unable to cast spell as target is outside of minimum_range/maximum_range\n".. PAIRS_TO_STRING(queued_ability))
             return false
         end
         print("target is within range!")

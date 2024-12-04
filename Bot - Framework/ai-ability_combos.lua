@@ -84,7 +84,7 @@ BotCombos = {
             on_update.cancel_if_target_shielded
         }))
         table.insert(return_combo, action.set_move_target(nil, {wanted_range = 6}, {}, {on_update.path_to_ability_wanted_range}))
-        table.insert(return_combo, action.projectile(nil, {r,r,d}, 0.9, {minumum_range = 0.5, maximum_range = 12, wanted_range = 6},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile))
+        table.insert(return_combo, action.projectile(nil, {r,r,d}, 0.9, {minimum_range = 0.5, maximum_range = 12, wanted_range = 6},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile))
         table.insert(return_combo, action.set_move_target(nil, {wanted_range = 6}, {}, {on_update.path_to_ability_wanted_range}))
         table.insert(return_combo, abilities.spray.cold())
         table.insert(return_combo, action.set_move_target(nil, {wanted_range = 6}, {}, {on_update.path_to_ability_wanted_range}))
@@ -120,17 +120,18 @@ BotCombos = {
 
     --below are a bunch of random ones I have made 
     --but are untested
-    charge_forward_and_use_ability = function(ai_data, new_action, charge_range)
+    charge_to_range_and_use_ability = function(ai_data, new_action, charge_range)
         charge_range = charge_range or ai_data.wanted_range
         local target_pos = unit_utilities.get_unit_position(ai_data.target_unit) or ai_data.self_data.position_table
         local self_position = unit_utilities.get_unit_position(ai_data.bot_unit)
         local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
-        local return_combo = {
-            action.move_to_point(nil, {wanted_range = 2, minimum_range = 0, maximum_range = 100, max_duration = 2}, condition_groups.activation_conditions.default, {on_update.path_to_ability_wanted_range, on_update.face_move_pos}),
-            new_action,
-        }
+        local return_combo = {}
 
- 
+        if ai_data.target_distance > charge_range then
+            return_combo[#return_combo + 1] = action.move_to_point(nil, {wanted_range = charge_range, minimum_range = 0, maximum_range = 100, max_duration = 2}, condition_groups.activation_conditions.default, {on_update.path_to_ability_wanted_range, on_update.face_move_pos})
+        end
+        return_combo[#return_combo + 1] = new_action
+
         return return_combo
     end,
     arcane_mine_lightning_combo = function(ai_data)

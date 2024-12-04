@@ -66,24 +66,26 @@ BotAbilities = {
     --projectiles
     --charge time is based off of charge value from 0 to 1 where 1 will be overcharged
     projectile = {
-        earth = function() return           action.projectile(nil, spells.ddd, 0.9, {minimum_duration = 1.1, wanted_range = 8, minumum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
-        earth_shatter = function() return   action.projectile(nil, spells.ddd, 0.9, {minimum_duration = 1.1, minumum_range = 0.5, maximum_range = 12}, condition_groups.activation_conditions.projectile_shatter, condition_groups.on_update.projectile_shatter) end,
-        cold = function() return            action.projectile(nil, {r,r,d}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minumum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
-        fire = function() return            action.projectile(nil, {d,f,f}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minumum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
-        arcane = function() return          action.projectile(nil, {d,s,s}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minumum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
-        arcane_fire = function() return     action.projectile(nil, {d,s,f}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minumum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        earth = function() return               action.projectile(nil, spells.ddd, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        earth_shatter = function() return       action.projectile(nil, spells.ddd, 0.9, {minimum_duration = 1.1, minimum_range = 0.5, maximum_range = 12}, condition_groups.activation_conditions.projectile_shatter, condition_groups.on_update.projectile_shatter) end,
+        cold = function() return                action.projectile(nil, {r,r,d}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        fire = function() return                action.projectile(nil, {d,f,f}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        arcane = function() return              action.projectile(nil, {d,s,s}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        arcane_fire = function() return         action.projectile(nil, {d,s,f}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
+        status_cold_rock = function() return    action.projectile(nil, {w,d,r}, 0, {cooldown = 3}, {}, {on_update.cancel_immediately}) end,
     },
 
     --sprays
     --charge time is based off of time in seconds
     spray = {
-        cold = function() return            action.spray(nil, spells.rrr, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
-        water = function() return           action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minumum_range = 0.5, maximum_range = 6}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
-        fire = function() return            action.spray(nil, {f,f,f}, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
-        steam_qfq = function() return            action.spray(nil, {f,q,q}, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
+        cold = function() return            action.spray(nil, spells.rrr, 4, {minimum_duration = 0.5, wanted_range = 6, minimum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
+        water = function() return           action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minimum_range = 0.5, maximum_range = 6}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
+        fire = function() return            action.spray(nil, {f,f,f}, 4, {minimum_duration = 0.5, wanted_range = 6, minimum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
+        steam_qfq = function() return            action.spray(nil, {f,q,q}, 4, {minimum_duration = 0.5, wanted_range = 6, minimum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
         fire_burst = function() return      action.spray(nil, {f,f,f}, 0.1, {}, {}, {}) end,
         cold_burst = function() return      action.spray(nil, {r,r,r}, 0.1, {}, {}, {}) end,
         steam_burst = function() return     action.spray(nil, {q,f,q}, 0.1, {}, {}, {}) end,
+        water_burst = function() return     action.spray(nil, {q,q,q}, 0.1, {}, {}, {}) end,
     },
     --beams
     --charge time is based off of time in seconds
@@ -94,6 +96,11 @@ BotAbilities = {
         water = function() 
             return action.beam({0,0,0}, {q,s,s}, 4, {}, condition_groups.activation_conditions.beam, condition_groups.on_update.beam) 
         end,
+    },
+
+    lightning = {
+        aaa = function() return            action.spell(nil, {a,a,a}, false, 0, {minimum_range = 1, maximum_range = 7}, condition_groups.activation_conditions.lightning, condition_groups.on_update.lightning) end,
+        asa = function() return            action.spell(nil, {a,s,a}, false, 0, {minimum_range = 1, maximum_range = 6}, condition_groups.activation_conditions.lightning, condition_groups.on_update.lightning) end,
     },
 
     --weapon
@@ -108,14 +115,14 @@ BotAbilities = {
 
     --magicks
     magicks = {
-        haste = function() return action.magick(nil, helper.available_magicks.haste, {cooldown = 10, minimum_duration = helper.minimum_duration.magick, minumum_range = 0, maximum_range = 1000}, {}, condition_groups.on_update.self_cast_magick) end,
-        teleport = function() return action.magick(nil, helper.available_magicks.teleport, {wanted_range = 8.25, cooldown = 0,minimum_duration =  helper.minimum_duration.magick, minumum_range = 0, maximum_range = 1000}, {activation_conditions.teleport_towards_target_is_valid}, condition_groups.on_update.magick_teleport_in) end,
-        geyser = function() return action.magick(nil, helper.available_magicks.geyser, {cooldown = 5, minumum_range = 2, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
-        stasis = function() return action.magick(nil, helper.available_magicks.stasis, {cooldown = 10, minumum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
-        midsummers_blessing = function() return action.magick(nil, helper.available_magicks.midsummers_blessing, {cooldown = 7, minumum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, condition_groups.activation_conditions.magick, condition_groups.on_update.self_cast_magick) end,
-        flame_tornado = function() return action.magick(nil, helper.available_magicks.flame_tornado, {cooldown = 7, minumum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, condition_groups.activation_conditions.magick, condition_groups.on_update.magick) end,
+        haste = function() return action.magick(nil, helper.available_magicks.haste, {cooldown = 10, minimum_duration = helper.minimum_duration.magick, minimum_range = 0, maximum_range = 1000}, {}, condition_groups.on_update.self_cast_magick) end,
+        teleport = function() return action.magick(nil, helper.available_magicks.teleport, {wanted_range = 8.25, cooldown = 0,minimum_duration =  helper.minimum_duration.magick, minimum_range = 0, maximum_range = 1000}, {activation_conditions.teleport_towards_target_is_valid}, condition_groups.on_update.magick_teleport_in) end,
+        geyser = function() return action.magick(nil, helper.available_magicks.geyser, {cooldown = 5, minimum_range = 2, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
+        stasis = function() return action.magick(nil, helper.available_magicks.stasis, {cooldown = 10, minimum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
+        midsummers_blessing = function() return action.magick(nil, helper.available_magicks.midsummers_blessing, {cooldown = 7, minimum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, condition_groups.activation_conditions.magick, condition_groups.on_update.self_cast_magick) end,
+        flame_tornado = function() return action.magick(nil, helper.available_magicks.flame_tornado, {cooldown = 7, minimum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, condition_groups.activation_conditions.magick, condition_groups.on_update.magick) end,
 
-        conflag = function() return action.magick(nil, helper.available_magicks.conflagration, {cooldown = 2, minumum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
+        conflag = function() return action.magick(nil, helper.available_magicks.conflagration, {cooldown = 2, minimum_range = 0, maximum_range = 1000, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
         tornado = function() return action.magick(nil, helper.available_magicks.tornado, {cooldown = 20, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
         tidal_wave = function() return action.magick(nil, helper.available_magicks.tidal_wave, {cooldown = 5, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
         natures_call = function() return action.magick(nil, helper.available_magicks.natures_call, {cooldown = 5, minimum_duration = helper.minimum_duration.magick}, {}, condition_groups.on_update.magick) end,
@@ -160,6 +167,7 @@ local default_weights = {
     ward = 20000,
     shield_beam = 20001,
     clear_storm = 20001,
+    clear_status = 20001,
     block_lightning_with_storm = 20002,
     move_out_of_storm = 3000,
     heal_mine_agressive = 220,
@@ -168,7 +176,7 @@ local default_weights = {
 
     basic_attack = 10,
     shatter = 19000,
-    basic_combo = 11,
+    basic_combo = 10,
 
     haste = 200,
     teleport = 150,
@@ -218,7 +226,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.move_out_of_storm
         end
 
-        return weight, {action.move_to_point(nil, {charge_time = 2, max_duration = 1}, {}, {on_update.path_to_wanted_position, on_update.face_move_pos, on_update.cancel_to_shield, on_update.cancel_if_move_target_reached})}
+        return weight, {action.move_to_point(nil, {charge_time = 1, max_duration = 1}, {}, {on_update.path_to_wanted_position, on_update.face_move_pos, on_update.cancel_to_shield, on_update.cancel_if_move_target_reached})}
     end,
 
     --healing
@@ -277,24 +285,6 @@ BotAbilities.evaluation_functions = {
             ActionController.move_forward(5, 0.75), 
         }
     end,
-    heal_mine_agressive = function (ai_data, dt, ability_name)
-
-        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
-
-        local weight = 0
-        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
-        local b_hp = ai_data.self_data.health_p
-        local t_hp = target_unit_data.health_p
-        if ai_data.mode ~= helper.bot_modes.heal
-        and helper.count_healing_mines(ai_data) <= 0
-        and b_hp < 100
-        and ai_data.target_distance > 4
-        then
-            weight = default_weights.heal_mine_agressive
-        end
-
-        return weight * random_modifier(), {BotAbilities.heal.mines_facing_target(), BotAbilities.ward.earth(), ActionController.projectile(nil, {w,d,r}, 0, {}, {}, {on_update.cancel_immediately}), ActionController.move_forward(5,  0.75)}
-    end,
     heal_mine_override = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -313,6 +303,31 @@ BotAbilities.evaluation_functions = {
             BotAbilities.heal.mines_facing_wanted_pos(), 
         }
     end,
+    heal_mine_agressive = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode ~= helper.bot_modes.heal
+        and helper.count_healing_mines(ai_data) <= 0
+        and b_hp < 80
+        and ai_data.target_distance > 4
+        then
+            weight = default_weights.heal_mine_agressive
+        end
+
+        return weight * random_modifier(), {
+            BotAbilities.heal.mines_facing_target(), 
+            BotAbilities.ward.earth(), 
+            ActionController.projectile(nil, {w,d,r}, 0, {}, {}, {on_update.cancel_immediately}), 
+            ActionController.move_forward(5,  0.75)}
+    end,
+
+    --clear status
+    
 
     --magicks
     midsummers_blessing = function (ai_data, dt, ability_name)
@@ -322,7 +337,7 @@ BotAbilities.evaluation_functions = {
         local weight = 0
         local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
         local b_hp = ai_data.self_data.health_p
-        if b_hp <= 75 --ai_data.mode ~= helper.bot_modes.attack
+        if b_hp <= 40 --ai_data.mode ~= helper.bot_modes.attack
         and ai_data.self_data.focus >= helper.magick_mana_cost.midsummers_blessing --magick focus for the tiers are 25, 50, 75, 100
         then
             weight = default_weights.midsummers_blessing
@@ -356,7 +371,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.ward
         end
 
-        return weight, {action.ward(ai_data.wanted_ward, {cooldown = 0.75})}
+        return weight, {action.ward(ai_data.wanted_ward, {cooldown = 1.5})}
     end,
     shield_beam = function (ai_data, dt, ability_name)
 
@@ -394,7 +409,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.water_push
         end
 
-        return weight * random_modifier(), function() return action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minumum_range = 0.5, maximum_range = 6, cooldown = 4}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end
+        return weight * random_modifier(), function() return action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minimum_range = 0.5, maximum_range = 6, cooldown = 4}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end
     end,
     defence_clear_storm = function (ai_data, dt, ability_name)
 
@@ -434,6 +449,7 @@ BotAbilities.evaluation_functions = {
         local t_hp = target_unit_data.health_p
         if (ai_data.target_unit_data.spell_type == helper.spell_types.lightning_aoe or ai_data.target_unit_data.spell_type == helper.spell_types.lightning)
         and not helper.player_is_obstructed_by_storm(ai_data, ai_data.target_data.peer_id)
+        and (ai_data.self_data.ward.lightning <= 0)
         then
             weight = default_weights.block_lightning_with_storm
         end
@@ -450,7 +466,23 @@ BotAbilities.evaluation_functions = {
         }
     end,
 
-    --offence
+    --clear status
+    clear_status_cold = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        if helper.unit_is_wet(ai_data.bot_unit) or helper.unit_is_burning(ai_data.bot_unit) then
+            weight = default_weights.clear_status
+        end
+
+        return weight * random_modifier(), {
+            BotAbilities.projectile.status_cold_rock, 
+            ActionController.move_forward(5,  0.25)}
+    end,
+
+    -- --offence
     weapon_swing = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -464,12 +496,12 @@ BotAbilities.evaluation_functions = {
         --local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
         if similar_elements <= 0
            and ai_data.mode == helper.bot_modes.attack
-           and ai_data.target_distance <= 2
+           and ai_data.target_distance <= 4
         then
             weight = default_weights.basic_attack
         end
 
-        return weight * random_modifier(), BotAbilities.weapon.swing
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.weapon.swing, 1.5)
     end,
     weapon_charge = function (ai_data, dt, ability_name)
 
@@ -488,8 +520,9 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_attack
         end
 
-        return weight * random_modifier(), BotAbilities.weapon.charge
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.weapon.charge, max_range - 1)
     end,
+
     rock = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -500,7 +533,7 @@ BotAbilities.evaluation_functions = {
         local t_hp = target_unit_data.health_p
         if ai_data.mode == helper.bot_modes.attack
         and ai_data.target_data.ward.earth <= 0
-        and ai_data.target_distance < 12
+        --and ai_data.target_distance < 12
         then
             weight = default_weights.basic_attack
         end
@@ -509,8 +542,33 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.shatter
         end
 
-        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.projectile.earth)
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.projectile.earth, 6)
     end,
+
+    lightning_aaa = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.lightning <= 0
+        and not (helper.player_is_obstructed_by_storm(ai_data, ai_data.target_data.peer_id))
+        and not helper.unit_is_wet(ai_data.self_data.unit)
+        --and ai_data.target_distance < 12
+        then
+            weight = default_weights.basic_attack
+            if helper.unit_is_wet(ai_data.target_unit_data.unit) then
+                weight = weight * 2
+            end
+        end
+        
+
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.lightning.aaa, 6)
+    end,
+
     spray_steam_qfq = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -527,7 +585,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_attack
         end
 
-        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.steam_qfq, 6)
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.spray.steam_qfq, 6)
     end,
     spray_fire = function (ai_data, dt, ability_name)
 
@@ -545,7 +603,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_attack
         end
 
-        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.fire, 7)
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.spray.fire, 7)
     end,
     spray_cold = function (ai_data, dt, ability_name)
 
@@ -563,8 +621,28 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_attack
         end
 
-        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.cold, 7)
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.spray.cold, 7)
     end,
+    spray_water_burst = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.water <= 0
+        --and ai_data.target_distance < 12
+        and not helper.target_blocked_by_shield(ai_data)
+        then
+            weight = default_weights.basic_attack
+        end
+
+        return weight * random_modifier(), ai_data, BotAbilities.spray.water_burst
+    end,
+
+    --combos
     charge_forward_quake_wet_lightning = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -574,7 +652,7 @@ BotAbilities.evaluation_functions = {
         local b_hp = ai_data.self_data.health_p
         local t_hp = target_unit_data.health_p
         if ai_data.mode == helper.bot_modes.attack
-        --and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_data.ward.earth <= 0
         and ai_data.target_distance < 8
         then
             weight = default_weights.basic_combo
@@ -591,7 +669,7 @@ BotAbilities.evaluation_functions = {
         local b_hp = ai_data.self_data.health_p
         local t_hp = target_unit_data.health_p
         if ai_data.mode == helper.bot_modes.attack
-        --and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_data.ward.earth <= 0
         and ai_data.target_distance < 8
         then
             weight = default_weights.basic_combo
@@ -608,7 +686,7 @@ BotAbilities.evaluation_functions = {
         local b_hp = ai_data.self_data.health_p
         local t_hp = target_unit_data.health_p
         if ai_data.mode == helper.bot_modes.attack
-        --and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_data.ward.earth <= 0
         and ai_data.target_distance < 8
         then
             weight = default_weights.basic_combo

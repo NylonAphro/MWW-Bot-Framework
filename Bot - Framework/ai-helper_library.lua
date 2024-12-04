@@ -482,7 +482,7 @@ function _PathAux_get_closest_unobstructed_point(cane_navmeshquery, start_positi
 
 	if nm_start_position and nm_end_position then
 		local result, nm_closest_end_position, nm_closest_end_polyref = raycast_closest_position(cane_navmeshquery, nm_start_polyref, nm_start_position, nm_end_position)
-        print("Result: " .. tostring(result))
+        --print("Result: " .. tostring(result))
         if DISTANCE_POINT_OR_VECTOR(end_position, nm_closest_end_position) > 0.1 then
             return nm_closest_end_position
         else
@@ -490,7 +490,7 @@ function _PathAux_get_closest_unobstructed_point(cane_navmeshquery, start_positi
         end
 	elseif nm_start_position ~= nil then
 		local result, nm_closest_end_position, nm_closest_end_polyref = raycast_closest_position(cane_navmeshquery, nm_start_polyref, nm_start_position, end_position)
-        print("Result: " .. tostring(result))
+        --print("Result: " .. tostring(result))
         if DISTANCE_POINT_OR_VECTOR(end_position, nm_closest_end_position) > 0.1 then
             return nm_closest_end_position
         else
