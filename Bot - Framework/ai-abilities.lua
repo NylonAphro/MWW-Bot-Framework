@@ -80,6 +80,7 @@ BotAbilities = {
         cold = function() return            action.spray(nil, spells.rrr, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
         water = function() return           action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minumum_range = 0.5, maximum_range = 6}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
         fire = function() return            action.spray(nil, {f,f,f}, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
+        steam_qfq = function() return            action.spray(nil, {f,q,q}, 4, {minimum_duration = 0.5, wanted_range = 6, minumum_range = 0.5, maximum_range = 8}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end,
         fire_burst = function() return      action.spray(nil, {f,f,f}, 0.1, {}, {}, {}) end,
         cold_burst = function() return      action.spray(nil, {r,r,r}, 0.1, {}, {}, {}) end,
         steam_burst = function() return     action.spray(nil, {q,f,q}, 0.1, {}, {}, {}) end,
@@ -165,9 +166,9 @@ local default_weights = {
 
     path_to_wanted_range = 1,
 
-    basic_attack = 2000,
+    basic_attack = 10,
     shatter = 19000,
-    basic_combo = 2500,
+    basic_combo = 11,
 
     haste = 200,
     teleport = 150,
@@ -217,7 +218,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.move_out_of_storm
         end
 
-        return weight, {action.move_to_point(nil, {charge_time = 2}, {}, {on_update.path_to_wanted_position, on_update.face_move_pos, on_update.cancel_to_shield, on_update.cancel_if_move_target_reached})}
+        return weight, {action.move_to_point(nil, {charge_time = 2, max_duration = 1}, {}, {on_update.path_to_wanted_position, on_update.face_move_pos, on_update.cancel_to_shield, on_update.cancel_if_move_target_reached})}
     end,
 
     --healing
@@ -393,7 +394,7 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.water_push
         end
 
-        return weight * random_modifier(), BotAbilities.spray.water
+        return weight * random_modifier(), function() return action.spray(nil, spells.qqq, 4, {minimum_duration = 0.5, wanted_range = 10, minumum_range = 0.5, maximum_range = 6, cooldown = 4}, condition_groups.activation_conditions.spray, condition_groups.on_update.spray) end
     end,
     defence_clear_storm = function (ai_data, dt, ability_name)
 
@@ -508,7 +509,61 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.shatter
         end
 
-        return weight * random_modifier(), BotAbilities.projectile.earth
+        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.projectile.earth)
+    end,
+    spray_steam_qfq = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.water <= 0
+        --and ai_data.target_distance < 30
+        and not helper.target_blocked_by_shield(ai_data)
+        then
+            weight = default_weights.basic_attack
+        end
+
+        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.steam_qfq, 6)
+    end,
+    spray_fire = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.fire <= 0
+        --and ai_data.target_distance < 12
+        and not helper.target_blocked_by_shield(ai_data)
+        then
+            weight = default_weights.basic_attack
+        end
+
+        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.fire, 7)
+    end,
+    spray_cold = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.cold <= 0
+        --and ai_data.target_distance < 12
+        and not helper.target_blocked_by_shield(ai_data)
+        then
+            weight = default_weights.basic_attack
+        end
+
+        return weight * random_modifier(), BotCombos.charge_forward_and_use_ability(ai_data, BotAbilities.spray.cold, 7)
     end,
     charge_forward_quake_wet_lightning = function (ai_data, dt, ability_name)
 
@@ -523,10 +578,6 @@ BotAbilities.evaluation_functions = {
         and ai_data.target_distance < 8
         then
             weight = default_weights.basic_combo
-        end
-
-        if helper.target_is_frozen then
-            weight = default_weights.shatter
         end
 
         return weight * random_modifier(), BotCombos.charge_forward_quake_wet_lightning(ai_data)
@@ -546,10 +597,6 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_combo
         end
 
-        if helper.target_is_frozen then
-            weight = default_weights.shatter
-        end
-
         return weight * random_modifier(), BotCombos.charge_forward_steam_storm_quake(ai_data)
     end,
     charge_forward_quake_mines = function (ai_data, dt, ability_name)
@@ -567,10 +614,44 @@ BotAbilities.evaluation_functions = {
             weight = default_weights.basic_combo
         end
 
+        return weight * random_modifier(), BotCombos.charge_forward_quake_mines(ai_data)
+    end,
+    charge_forward_quake_lightning = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_distance < 8
+        then
+            weight = default_weights.basic_combo
+        end
+
+        return weight * random_modifier(), BotCombos.charge_forward_quake_lightning(ai_data)
+    end,
+    charge_forward_rock_qer = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_distance < 8
+        then
+            weight = default_weights.basic_combo
+        end
+
         if helper.target_is_frozen then
             weight = default_weights.shatter
         end
 
-        return weight * random_modifier(), BotCombos.charge_forward_quake_mines(ai_data)
+        return weight * random_modifier(), BotCombos.charge_forward_rock_qer(ai_data)
     end,
 }
