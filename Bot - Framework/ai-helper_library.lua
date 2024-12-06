@@ -363,16 +363,25 @@ HelperLibrary.get_wanted_ward = function (ai_data)
     local target_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
     local simple_spell = spell_utilities.spell_to_elements(target_data.spell) -- {water = 0, life = 0, shield = 0, cold = 0, lightning = 0, arcane = 0, earth = 0, fire = 3, empty = 0}
     local spell = spell_utilities.elements_to_spell(simple_spell) -- (table eg: {"fire","fire","fire"})
-    local default_ward = {e,d,d}
-    local wanted_ward = nil
     local current_ward = ai_data.self_data.ward
+    local default_ward = {e,d,d}
+    if current_ward and #current_ward >= 3 then default_ward = current_ward end
+    local wanted_ward = nil
     local obstructions = HelperLibrary.get_obstructions(ai_data)
     local healing_mine_count = HelperLibrary.count_healing_mines(ai_data)
     local arcane_mine_count = HelperLibrary.count_arcane_mines(ai_data)
 
     -- if there are 3 or more healing mines stay in an earth ward
-    if healing_mine_count >= 3 then
+    if healing_mine_count >= 3 and ai_data.target_distance >= 4 then
         return default_ward
+    end
+
+    --ward wall/barrier
+    local wall_elements = obstructions.barrier_elements
+    if wall_elements and #wall_elements >= 3 then 
+        if not spell_utilities.spell_contains(wall_elements, w) then
+            return table.deep_clone(wall_elements) 
+        end
     end
 
     -- if there are more arcane mines than healing mines change to eds/ses
@@ -419,7 +428,7 @@ HelperLibrary.get_wanted_ward = function (ai_data)
     end
 
     -- adjust ward if it is close to target (needs earth ward) and does not contain lightning
-    if ai_data.target_distance <= 5 and (not spell_utilities.spell_contains(wanted_ward, a)) then
+    if ai_data.target_distance <= 5 and (not spell_utilities.spell_contains(wanted_ward, a)) and (SPELL_ELEMENT_COUNT(wanted_ward, q) ~= 3) then
         spell[1] = d
     end
 

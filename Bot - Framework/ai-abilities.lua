@@ -38,10 +38,10 @@ BotAbilities = {
 
     --aoe
     aoe = {
-        water = function() return action.self_cast(spells.qqq, {cooldown = 1}) end,
-        sfs = function() return action.self_cast(spells.ssf, {cooldown = 1}) end,
-        fire = function() return action.self_cast(spells.fff, {cooldown = 1}) end,
-        cold = function() return action.self_cast(spells.rrr, {cooldown = 1}) end,
+        water = function() return action.self_cast(spells.qqq, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
+        sfs = function() return action.self_cast(spells.ssf, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
+        fire = function() return action.self_cast(spells.fff, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
+        cold = function() return action.self_cast(spells.rrr, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
     },
     
     --wards
@@ -73,6 +73,7 @@ BotAbilities = {
         arcane = function() return              action.projectile(nil, {d,s,s}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
         arcane_fire = function() return         action.projectile(nil, {d,s,f}, 0.9, {minimum_duration = 1.1, wanted_range = 8, minimum_range = 0.5, maximum_range = 12},  condition_groups.activation_conditions.default, condition_groups.on_update.projectile) end,
         status_cold_rock = function() return    action.projectile(nil, {w,d,r}, 0, {cooldown = 3}, {}, {on_update.cancel_immediately}) end,
+        status_fire_rock = function() return    action.projectile(nil, {w,d,f}, 0, {cooldown = 3}, {}, {on_update.cancel_immediately}) end,
     },
 
     --sprays
@@ -323,7 +324,7 @@ BotAbilities.evaluation_functions = {
             BotAbilities.heal.mines_facing_target(), 
             BotAbilities.ward.earth(), 
             ActionController.projectile(nil, {w,d,r}, 0, {}, {}, {on_update.cancel_immediately}), 
-            ActionController.move_forward(5,  0.75)}
+            ActionController.move_forward(5,  0.2)}
     end,
 
     --clear status
@@ -467,13 +468,28 @@ BotAbilities.evaluation_functions = {
     end,
 
     --clear status
-    clear_status_cold = function (ai_data, dt, ability_name)
+    clear_status_with_cold = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
 
         local weight = 0
         local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
         if helper.unit_is_wet(ai_data.bot_unit) or helper.unit_is_burning(ai_data.bot_unit) then
+            weight = default_weights.clear_status
+        end
+
+        return weight * random_modifier(), {
+            BotAbilities.projectile.status_cold_rock, 
+            ActionController.move_forward(5,  0.25)}
+    end,
+    --clear status
+    clear_status_with_fire = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        if helper.unit_is_chilled(ai_data.bot_unit) then
             weight = default_weights.clear_status
         end
 
@@ -544,6 +560,23 @@ BotAbilities.evaluation_functions = {
 
         return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.projectile.earth, 6)
     end,
+    rock_sdf = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.fire <= 0
+        --and ai_data.target_distance < 12
+        then
+            weight = default_weights.basic_attack
+        end
+
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.projectile.arcane_fire, 6)
+    end,
 
     lightning_aaa = function (ai_data, dt, ability_name)
 
@@ -567,6 +600,52 @@ BotAbilities.evaluation_functions = {
         
 
         return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.lightning.aaa, 6)
+    end,
+    lightning_asa = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.lightning <= 0
+        and not (helper.player_is_obstructed_by_storm(ai_data, ai_data.target_data.peer_id))
+        and not helper.unit_is_wet(ai_data.self_data.unit)
+        --and ai_data.target_distance < 12
+        then
+            weight = default_weights.basic_attack
+            if helper.unit_is_wet(ai_data.target_unit_data.unit) then
+                weight = weight * 2
+            end
+        end
+        
+
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.lightning.asa, 6)
+    end,
+
+    aoe_sfs = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.arcane <= 0
+        --and not (helper.player(ai_data, ai_data.target_data.peer_id))
+        and not helper.unit_is_wet(ai_data.self_data.unit)
+        then
+            weight = default_weights.basic_attack
+            if not helper.unit_is_wet(ai_data.target_unit_data.unit) then
+                weight = weight * 2
+            end
+        end
+        
+
+        return weight * random_modifier(), BotCombos.charge_to_range_and_use_ability(ai_data, BotAbilities.aoe.sfs, 2)
     end,
 
     spray_steam_qfq = function (ai_data, dt, ability_name)
@@ -731,5 +810,22 @@ BotAbilities.evaluation_functions = {
         end
 
         return weight * random_modifier(), BotCombos.charge_forward_rock_qer(ai_data)
+    end,
+    water_beam_cold_shatter = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.earth <= 0
+        and ai_data.target_distance < 13
+        then
+            weight = default_weights.basic_combo
+        end
+
+        return weight * random_modifier(), BotCombos.water_beam_cold_shatter(ai_data)
     end,
 }

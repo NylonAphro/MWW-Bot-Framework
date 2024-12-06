@@ -128,7 +128,7 @@ BotCombos = {
         local return_combo = {}
 
         if ai_data.target_distance > charge_range then
-            return_combo[#return_combo + 1] = action.move_to_point(nil, {wanted_range = charge_range, minimum_range = 0, maximum_range = 100, max_duration = 2}, condition_groups.activation_conditions.default, {on_update.path_to_ability_wanted_range, on_update.face_move_pos})
+            return_combo[#return_combo + 1] = action.move_to_point(nil, {wanted_range = charge_range, minimum_range = 0, maximum_range = 100, max_duration = 2}, condition_groups.activation_conditions.default, {on_update.path_to_ability_wanted_range, on_update.face_move_pos, on_update.cancel_to_ward, on_update.cancel_to_shield})
         end
         return_combo[#return_combo + 1] = new_action
 

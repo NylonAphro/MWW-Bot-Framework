@@ -91,7 +91,7 @@ function Bot:update_mode(dt)
     local current_mode = ai_data.mode
 
     --set the bot mode based off of hp
-    if ai_data.self_data.health_p >= (target_data.health_p - 30) then
+    if ai_data.self_data.health_p >= ((target_data.health_p or 0) - 30) then
         ai_data.mode = helper.bot_modes.attack
     else
         ai_data.mode = helper.bot_modes.heal
