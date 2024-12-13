@@ -38,10 +38,10 @@ BotAbilities = {
 
     --aoe
     aoe = {
-        water = function() return action.self_cast(spells.qqq, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
-        sfs = function() return action.self_cast(spells.ssf, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
-        fire = function() return action.self_cast(spells.fff, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
-        cold = function() return action.self_cast(spells.rrr, {cooldown = 0.1}, condition_groups.activation_conditions.default) end,
+        water = function() return action.self_cast(spells.qqq, {cooldown = 0.1, maximum_range = 3}, condition_groups.activation_conditions.default) end,
+        sfs = function() return action.self_cast(spells.ssf, {cooldown = 0.1, maximum_range = 3}, condition_groups.activation_conditions.default) end,
+        fire = function() return action.self_cast(spells.fff, {cooldown = 0.1, maximum_range = 3}, condition_groups.activation_conditions.default) end,
+        cold = function() return action.self_cast(spells.rrr, {cooldown = 0.1, maximum_range = 3}, condition_groups.activation_conditions.default) end,
     },
     
     --wards
@@ -177,7 +177,7 @@ local default_weights = {
 
     basic_attack = 10,
     shatter = 19000,
-    basic_combo = 10,
+    basic_combo = 15,
 
     haste = 200,
     teleport = 150,
@@ -249,22 +249,22 @@ BotAbilities.evaluation_functions = {
         -- return 101, BotAbilities.heal.self_channel
         return weight * random_modifier(), {ActionController.move_to_point(nil, {max_duration = 0.5}, {}, {on_update.cancel_to_ward, on_update.cancel_to_shield, on_update.path_to_wanted_position, on_update.face_move_pos, on_update.cancel_if_move_target_reached}), BotAbilities.heal.self_channel()}
     end,
-    self_heal_combo = function (ai_data, dt, ability_name)
+    -- self_heal_combo = function (ai_data, dt, ability_name)
 
-        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+    --     if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
 
-        local weight = 0
-        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
-        local b_hp = ai_data.self_data.health_p
-        local t_hp = target_unit_data.health_p
-        if ai_data.mode == helper.bot_modes.heal
-        and helper.count_healing_mines(ai_data) <= 0
-        then
-            weight = 100
-        end
+    --     local weight = 0
+    --     local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+    --     local b_hp = ai_data.self_data.health_p
+    --     local t_hp = target_unit_data.health_p
+    --     if ai_data.mode == helper.bot_modes.heal
+    --     and helper.count_healing_mines(ai_data) <= 0
+    --     then
+    --         weight = 100
+    --     end
 
-        return weight * random_modifier(), BotCombos.heal_turtle(ai_data)
-    end,
+    --     return weight * random_modifier(), BotCombos.heal_turtle(ai_data)
+    -- end,
     heal_mine_defend = function (ai_data, dt, ability_name)
 
         if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
@@ -590,6 +590,7 @@ BotAbilities.evaluation_functions = {
         and ai_data.target_data.ward.lightning <= 0
         and not (helper.player_is_obstructed_by_storm(ai_data, ai_data.target_data.peer_id))
         and not helper.unit_is_wet(ai_data.self_data.unit)
+        and (ai_data.target_distance > 4 or ai_data.target_distance < 1.2) --don't use lightning when in range for storm
         --and ai_data.target_distance < 12
         then
             weight = default_weights.basic_attack
@@ -613,6 +614,7 @@ BotAbilities.evaluation_functions = {
         and ai_data.target_data.ward.lightning <= 0
         and not (helper.player_is_obstructed_by_storm(ai_data, ai_data.target_data.peer_id))
         and not helper.unit_is_wet(ai_data.self_data.unit)
+        and (ai_data.target_distance > 4 or ai_data.target_distance < 1.2) --don't use lightning when in range for storm
         --and ai_data.target_distance < 12
         then
             weight = default_weights.basic_attack
@@ -640,7 +642,7 @@ BotAbilities.evaluation_functions = {
         then
             weight = default_weights.basic_attack
             if not helper.unit_is_wet(ai_data.target_unit_data.unit) then
-                weight = weight * 2
+                weight = weight + 1
             end
         end
         
@@ -827,5 +829,22 @@ BotAbilities.evaluation_functions = {
         end
 
         return weight * random_modifier(), BotCombos.water_beam_cold_shatter(ai_data)
+    end,
+    charge_forward_steam_lightning = function (ai_data, dt, ability_name)
+
+        if ability_is_on_cooldown(ai_data, dt, ability_name) then return 0, nil end
+
+        local weight = 0
+        local target_unit_data = unit_utilities.get_unit_data_from_unit(ai_data.target_unit)
+        local b_hp = ai_data.self_data.health_p
+        local t_hp = target_unit_data.health_p
+        if ai_data.mode == helper.bot_modes.attack
+        and ai_data.target_data.ward.lightning <= 0
+        and ai_data.target_distance < 13
+        then
+            weight = default_weights.basic_combo
+        end
+
+        return weight * random_modifier(), BotCombos.charge_forward_steam_lightning(ai_data)
     end,
 }

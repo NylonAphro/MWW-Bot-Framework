@@ -129,9 +129,9 @@ function Bot:update_pathing(dt)
 
     --check if bot is in a storm! 
     ai_data.storm_count = helper.count_storms(ai_data)
-    if ai_data.storm_count >= 1 then
-        ai_data.wanted_position = BotPathing:find_closest_valid_position(ai_data.self_data.position_table, 10) or ai_data.self_data.position_table
-    end
+    -- if ai_data.storm_count >= 1 then
+    --     ai_data.wanted_position = BotPathing:find_closest_valid_position(ai_data.self_data.position_table, 10) or ai_data.self_data.position_table
+    -- end
 
     --someone implement slerp, oh wait I did do that, SLERP_TOWARDS_POINT... also LERP is a PDX function
     ai_data.wanted_position = SMOOTH_TABLE(ai_data.wanted_position, prev_wanted_pos, 0.03 / dt)
